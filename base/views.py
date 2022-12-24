@@ -6,6 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from base.models import *
 from base.serializers import *
 
+from django.http import HttpResponse
+from django.core import serializers
+
 class RegisterUser(APIView):
     serializer_class = RegisterSerializer
     def post(self, request):
@@ -29,3 +32,13 @@ class LogoutUser(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+class AdminPanelTransactionFunctional(APIView):
+    def get(self, request):
+        type_id = request.GET.get('id', '')
+        result = TransactionCategory.objects.filter(
+            type=type_id
+        )
+        return HttpResponse(serializers.serialize('json', result),
+            content_type='application/json'
+        )
