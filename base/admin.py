@@ -1,3 +1,4 @@
 from django.contrib import admin
+from base.views import *
 
-# Register your models here.
+admin.site.register(User)
