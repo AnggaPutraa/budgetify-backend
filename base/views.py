@@ -37,7 +37,7 @@ class AdminPanelTransactionFunctional(APIView):
     def get(self, request):
         type_id = request.GET.get('id', '')
         result = TransactionCategory.objects.filter(
-            type=type_id
+            type=type_id,
         )
         return HttpResponse(serializers.serialize('json', result),
             content_type='application/json'
