@@ -36,5 +36,5 @@ class TransactionModel(models.Model):
     date = models.DateField(auto_now=False, auto_now_add=False)
     class Meta:
         verbose_name_plural = 'Transactions'
-    # def __str__(self):
-    #     return self.type
+    def __str__(self):
+        return self.type.type

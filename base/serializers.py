@@ -58,3 +58,21 @@ class LogoutSerializer(serializers.Serializer):
         except TokenError:
             self.fail('bad_token')
 
+class TransactionTypeSeriliazer(serializers.Serializer):
+    class Meta:
+        model = TransactionType
+        fields = '__all__'
+
+class TransactionCategorySeriliazer(serializers.Serializer):
+    type = TransactionTypeSeriliazer()
+    class Meta:
+        model = TransactionCategory
+        fields = '__all__'
+        
+
+class TransactionModelSeriliazser(serializers.Serializer):
+    type = TransactionTypeSeriliazer()
+    category = TransactionCategorySeriliazer()
+    class Meta:
+        model = TransactionModel
+        fields = '__all__'
