@@ -1,6 +1,7 @@
 from base.models import *
 from django.contrib import auth
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
@@ -58,19 +59,19 @@ class LogoutSerializer(serializers.Serializer):
         except TokenError:
             self.fail('bad_token')
 
-class TransactionTypeSeriliazer(serializers.Serializer):
+class TransactionTypeSeriliazer(ModelSerializer):
     class Meta:
         model = TransactionType
         fields = '__all__'
 
-class TransactionCategorySeriliazer(serializers.Serializer):
+class TransactionCategorySeriliazer(ModelSerializer):
     type = TransactionTypeSeriliazer()
     class Meta:
         model = TransactionCategory
         fields = '__all__'
         
 
-class TransactionModelSeriliazser(serializers.Serializer):
+class TransactionModelSeriliazser(ModelSerializer):
     type = TransactionTypeSeriliazer()
     category = TransactionCategorySeriliazer()
     class Meta:

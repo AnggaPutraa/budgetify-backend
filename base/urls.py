@@ -8,5 +8,7 @@ urlpatterns = [
     path('api/logout/', LogoutUserView.as_view(), name='logout'),
     path('api/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('api/transactions/', UserTransactionsView.as_view(), name='user-transaction'),
+    path('api/transactions/transaction-detail/<str:id>', UserTransactionDetailView.as_view(), name='user-transaction-detail'),
     re_path('getSubcategory/', UserSubCategoryView.as_view()),
 ]
