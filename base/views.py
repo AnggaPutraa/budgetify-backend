@@ -33,7 +33,7 @@ class LogoutUser(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-class AdminPanelTransactionFunctional(APIView):        
+class TransactionSubCategory(APIView):        
     def get(self, request):
         user_id = request.GET.get('user_id', '')
         type_id = request.GET.get('type_id', '')

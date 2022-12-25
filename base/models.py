@@ -31,10 +31,10 @@ class TransactionCategory(models.Model):
     class Meta:
         verbose_name_plural = 'Transaction Categories'
     def __str__(self):
-        return self.name
+        return f'{self.user.username} - {self.name}'
 
 class TransactionModel(models.Model):
-    user = user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.ForeignKey(
         TransactionType, 
         related_name='transaction', 
