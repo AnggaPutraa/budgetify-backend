@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.core import serializers as django_core_serializers
 from django.shortcuts import get_object_or_404
 
@@ -42,6 +42,8 @@ class UserTransactionsView(APIView):
         serializer = self.serializer_class(data=transactions, many=True)
         serializer.is_valid()
         return Response(serializer.data)
+    def post(self, request):
+        pass
 
 class UserTransactionDetailView(APIView):
     serializer_class = TransactionModelSeriliazser
@@ -55,6 +57,9 @@ class UserTransactionDetailView(APIView):
             transaction = self.get_object(transaction_id)
             serializer = self.serializer_class(transaction, many=False)
             return Response(serializer.data)
+        return Response({
+            "message": "'Required Query Paramter!'",
+        },status=status.HTTP_400_BAD_REQUEST)
 
 class UserSubCategoryView(APIView):        
     def get(self, request):
