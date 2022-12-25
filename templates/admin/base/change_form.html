@@ -2,19 +2,34 @@
 {{ block.super }}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $("#id_type").change(function () {
-            $.get(
-                `/getSubcategory/?id=${$('#id_type option:selected').val()}`,
-                (response) => {
-                    var options = '<option value="">---------</option>';
-                    for (var i = 0; i < response.length; i++) {
-                        options +=
-                            '<option value="' + response[i].pk + '">' + response[i].fields.name + "</option>";
-                    }
-                    $('#id_category').html(options);
+
+    const getSubcategory = () => {
+        $.get(
+            `/getSubcategory/?user_id=${$('#id_user option:selected').val()}&type_id=${$('#id_type option:selected').val()}`,
+            (response) => {
+                var options = '<option value="">---------</option>';
+                for (var i = 0; i < response.length; i++) {
+                    options +=
+                        '<option value="' + response[i].pk + '">' + response[i].fields.name + "</option>";
                 }
-            )
+                $('#id_category').html(options);
+            }
+        )
+    }
+
+    $(document).ready(function () {
+        $('#id_category').html('<option value="">---------</option>');
+        $("#id_type").change(function () {
+            var user_id = $('#id_user option:selected').val();
+            if (user_id != '') {
+                getSubcategory();
+            }
+        });
+        $("#id_user").change(function () {
+            var type_id = $('#id_type option:selected').val();
+            if (type_id != '') {
+                getSubcategory();
+            }
         });
     });
 </script>

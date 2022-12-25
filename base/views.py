@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.core import serializers
+from django.core import serializers as django_core_serializers
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -33,12 +33,14 @@ class LogoutUser(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-class AdminPanelTransactionFunctional(APIView):
+class AdminPanelTransactionFunctional(APIView):        
     def get(self, request):
-        type_id = request.GET.get('id', '')
+        user_id = request.GET.get('user_id', '')
+        type_id = request.GET.get('type_id', '')
         result = TransactionCategory.objects.filter(
             type=type_id,
+            user = User.objects.get(pk=user_id)
         )
-        return HttpResponse(serializers.serialize('json', result),
+        return HttpResponse(django_core_serializers.serialize('json', result),
             content_type='application/json'
         )

@@ -21,7 +21,7 @@ class TransactionType(models.Model):
         return self.type
 
 class TransactionCategory(models.Model):
-    user = user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     type = models.ForeignKey(
         TransactionType, 
