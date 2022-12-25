@@ -48,10 +48,13 @@ class UserTransactionDetailView(APIView):
     # permission_classes = [IsAuthenticated]
     def get_object(self, id):
         return get_object_or_404(TransactionModel, pk=id)
-    def get(self, request, id):
-        transaction = self.get_object(id)
-        serializer = self.serializer_class(transaction, many=False)
-        return Response(serializer.data)
+    def get(self, request):
+        transaction_id = request.GET.get('id')
+        print(transaction_id)
+        if transaction_id is not None:
+            transaction = self.get_object(transaction_id)
+            serializer = self.serializer_class(transaction, many=False)
+            return Response(serializer.data)
 
 class UserSubCategoryView(APIView):        
     def get(self, request):
