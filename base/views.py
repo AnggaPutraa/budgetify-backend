@@ -36,6 +36,17 @@ class LogoutUserView(APIView):
 class UserTransactionsView(APIView):
     serializer_class = TransactionModelSeriliazser
     permission_classes = [IsAuthenticated]
+    def get(self, request, user_id):
+        pass
+
+    def post(self, request):
+        pass
+    
+    def delete(self, request, transaction_id):
+        pass
+
+    def patch(self, request, transaction_id):
+        pass
 
 class UserSubCategoryView(APIView):        
     def get(self, request):
