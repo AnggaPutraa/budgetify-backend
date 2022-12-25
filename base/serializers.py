@@ -5,6 +5,11 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','username', 'email']
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
     class Meta:
@@ -59,19 +64,20 @@ class LogoutSerializer(serializers.Serializer):
         except TokenError:
             self.fail('bad_token')
 
-class TransactionTypeSeriliazer(ModelSerializer):
+class TransactionTypeSeriliazer(serializers.ModelSerializer):
     class Meta:
         model = TransactionType
         fields = '__all__'
 
-class TransactionCategorySeriliazer(ModelSerializer):
+class TransactionCategorySeriliazer(serializers.ModelSerializer):
     type = TransactionTypeSeriliazer()
     class Meta:
         model = TransactionCategory
         fields = '__all__'
         
 
-class TransactionModelSeriliazser(ModelSerializer):
+class TransactionModelSeriliazser(serializers.ModelSerializer):
+    user = UserSerializer()
     type = TransactionTypeSeriliazer()
     category = TransactionCategorySeriliazer()
     class Meta:
