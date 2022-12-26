@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponse
 from django.core import serializers as django_core_serializers
 from django.shortcuts import get_object_or_404
 
@@ -36,14 +36,33 @@ class LogoutUserView(APIView):
 
 class UserTransactionsView(APIView):
     serializer_class = TransactionModelSeriliazser
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-        transactions = TransactionModel.objects.all()
+        transactions = TransactionModel.objects.filter(user=request.user)
         serializer = self.serializer_class(data=transactions, many=True)
         serializer.is_valid()
         return Response(serializer.data)
     def post(self, request):
-        pass
+        body = request.data
+        transaction_type = TransactionType.objects.get(
+            type=body['type']
+        )
+        transaction_category = TransactionCategory.objects.filter(
+            user=request.user,
+            name=body['category']
+        )
+        print(transaction_type)
+        print(transaction_category)
+        transaction = TransactionModel.objects.create(
+            user = request.user,
+            type = transaction_type,
+            category = transaction_category.first(),
+            amount = body['amount'],
+            note = body['note'],
+            date = body['date']
+        )
+        serializer = self.serializer_class(transaction, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class UserTransactionDetailView(APIView):
     serializer_class = TransactionModelSeriliazser
@@ -59,7 +78,7 @@ class UserTransactionDetailView(APIView):
             return Response(serializer.data)
         return Response({
             "message": "'Required Query Paramter!'",
-        },status=status.HTTP_400_BAD_REQUEST)
+        },status=status.HTTP_400_BAD_REQUEST,)
 
 class UserSubCategoryView(APIView):        
     def get(self, request):
