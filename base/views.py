@@ -80,6 +80,22 @@ class UserTransactionDetailView(APIView):
             "message": "'Required Query Paramter!'",
         },status=status.HTTP_400_BAD_REQUEST,)
 
+class UserTransactionCategoryView(APIView):
+    serializer_class = TransactionCategorySeriliazer
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        transaction_category = TransactionCategory.objects.get(user=request.user)
+        serializer = self.serializer_class(data=transaction_category, many=True)
+        return Response(serializer, status=status.HTTP_200_OK)
+    def post(self, request):
+        pass
+    def delete(self, request):
+        id = request.GET.get('id')
+        TransactionCategory.objects.delete(pk=id)
+        return Response({
+            'message': 'successfuly deleted'
+        })
+
 class UserSubCategoryView(APIView):        
     def get(self, request):
         user_id = request.GET.get('user_id', '')
