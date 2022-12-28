@@ -81,19 +81,19 @@ class UserTransactionsView(APIView):
 
 class UserTransactionDetailView(APIView):
     serializer_class = TransactionModelSeriliazser
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get_object(self, id):
         return get_object_or_404(TransactionModel, pk=id)
     def get(self, request):
-        transaction_id = request.GET.get('id')
-        print(transaction_id)
-        if transaction_id is not None:
+        try:
+            transaction_id = request.GET.get('id')
             transaction = self.get_object(transaction_id)
             serializer = self.serializer_class(transaction, many=False)
             return Response(serializer.data)
-        return Response({
-            "message": "'Required Query Paramter!'",
-        },status=status.HTTP_400_BAD_REQUEST,)
+        except Exception as e:
+            raise ParseError(e)
+    def put(self, request):
+        transaction_id = request.GET.get('id')
 
 class UserTransactionCategoryView(APIView):
     serializer_class = TransactionCategorySeriliazer
