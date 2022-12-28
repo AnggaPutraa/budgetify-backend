@@ -48,21 +48,21 @@ class UserTransactionsView(APIView):
             raise ParseError(e)
     def post(self, request):
         try:
-            body = request.data
+            data = request.data
             transaction_type = TransactionType.objects.get(
-                type=body['type']
+                type=data['type']
             )
             transaction_category = TransactionCategory.objects.filter(
                 user=request.user,
-                name=body['category']
+                name=data['category']
             )
             transaction = TransactionModel.objects.create(
                 user = request.user,
                 type = transaction_type,
                 category = transaction_category.first(),
-                amount = body['amount'],
-                note = body['note'],
-                date = body['date']
+                amount = data['amount'],
+                note = data['note'],
+                date = data['date']
             )
             serializer = self.serializer_class(transaction, many=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
