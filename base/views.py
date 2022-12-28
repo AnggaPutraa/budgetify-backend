@@ -40,19 +40,35 @@ class UserTransactionCategoryView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         try:
-            category = TransactionCategory.objects.get(user=request.user)
+            category = TransactionCategory.objects.filter(user=request.user)
             serializer = self.serializer_class(data=category, many=True)
-            return Response(serializer, status=status.HTTP_200_OK)
+            serializer.is_valid()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             raise ParseError(e)
     def post(self, request):
         try:
-            pass
+            data = request.data
+            type = TransactionType.objects.get(type=data['type'])
+            category = TransactionCategory.objects.create(
+                user = request.user,
+                name = data['name'],
+                type = type
+            )
+            serializer = self.serializer_class(category, many=False)
+            return Response(serializer.data)
         except Exception as e:
             raise ParseError(e)
     def patch(self, request):
         try:
             id = request.GET.get('id')
+        except Exception as e:
+            raise ParseError(e)
+    def delete(self, request):
+        try:
+            id = request.GET.get('id')
+            category = TransactionCategory.objects.get(pk=id)
+            category.delete()
         except Exception as e:
             raise ParseError(e)
 
