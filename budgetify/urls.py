@@ -20,3 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('base.urls')),
 ]
+
+handler404 = 'helpers.views.handle_404_not_found'
