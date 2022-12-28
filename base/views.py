@@ -3,6 +3,7 @@ from django.core import serializers as django_core_serializers
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -38,31 +39,47 @@ class UserTransactionsView(APIView):
     serializer_class = TransactionModelSeriliazser
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        transactions = TransactionModel.objects.filter(user=request.user)
-        serializer = self.serializer_class(data=transactions, many=True)
-        serializer.is_valid()
-        return Response(serializer.data)
+        try:
+            transactions = TransactionModel.objects.filter(user=request.user)
+            serializer = self.serializer_class(data=transactions, many=True)
+            serializer.is_valid()
+            return Response(serializer.data)
+        except Exception as e:
+            raise ParseError(e)
     def post(self, request):
-        body = request.data
-        transaction_type = TransactionType.objects.get(
-            type=body['type']
-        )
-        transaction_category = TransactionCategory.objects.filter(
-            user=request.user,
-            name=body['category']
-        )
-        print(transaction_type)
-        print(transaction_category)
-        transaction = TransactionModel.objects.create(
-            user = request.user,
-            type = transaction_type,
-            category = transaction_category.first(),
-            amount = body['amount'],
-            note = body['note'],
-            date = body['date']
-        )
-        serializer = self.serializer_class(transaction, many=False)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            body = request.data
+            transaction_type = TransactionType.objects.get(
+                type=body['type']
+            )
+            transaction_category = TransactionCategory.objects.filter(
+                user=request.user,
+                name=body['category']
+            )
+            print(transaction_type)
+            print(transaction_category)
+            transaction = TransactionModel.objects.create(
+                user = request.user,
+                type = transaction_type,
+                category = transaction_category.first(),
+                amount = body['amount'],
+                note = body['note'],
+                date = body['date']
+            )
+            serializer = self.serializer_class(transaction, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            raise ParseError(e)
+    def delete(self, request):
+        try:
+            id = request.GET.get('id')
+            transaction = TransactionModel.objects.get(id=id)
+            transaction.delete()
+            return Response({
+                "detail": "successfuly deleted a transaction"
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            raise ParseError(e)
 
 class UserTransactionDetailView(APIView):
     serializer_class = TransactionModelSeriliazser
@@ -89,12 +106,6 @@ class UserTransactionCategoryView(APIView):
         return Response(serializer, status=status.HTTP_200_OK)
     def post(self, request):
         pass
-    def delete(self, request):
-        id = request.GET.get('id')
-        TransactionCategory.objects.delete(pk=id)
-        return Response({
-            'message': 'successfuly deleted'
-        })
 
 class UserSubCategoryView(APIView):        
     def get(self, request):
