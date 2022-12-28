@@ -86,14 +86,36 @@ class UserTransactionDetailView(APIView):
         return get_object_or_404(TransactionModel, pk=id)
     def get(self, request):
         try:
-            transaction_id = request.GET.get('id')
-            transaction = self.get_object(transaction_id)
+            id = request.GET.get('id')
+            transaction = self.get_object(id)
             serializer = self.serializer_class(transaction, many=False)
             return Response(serializer.data)
         except Exception as e:
             raise ParseError(e)
-    def put(self, request):
-        transaction_id = request.GET.get('id')
+    def patch(self, request):
+        try:
+            data = request.data
+            id = request.GET.get('id')
+            transaction = TransactionModel.objects.get(id=id)
+            if data.get("type") is not None:
+                transaction_type = TransactionType.objects.get(
+                    type=data['type']
+                )
+                transaction.type = transaction_type
+            if data.get("category") is not None:
+                transaction_category = TransactionCategory.objects.filter(
+                    user=request.user,
+                    name=data['category']
+                )
+                transaction.category = transaction_category
+            transaction.amount = data.get("amount", transaction.amount)
+            transaction.note = data.get("note", transaction.note)
+            transaction.date = data.get("date", transaction.date)
+            transaction.save()
+            serializer = self.serializer_class(transaction, many=False)
+            return Response(serializer.data)
+        except Exception as e:
+            raise ParseError(e)
 
 class UserTransactionCategoryView(APIView):
     serializer_class = TransactionCategorySeriliazer
