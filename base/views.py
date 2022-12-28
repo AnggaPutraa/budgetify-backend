@@ -134,7 +134,10 @@ class UserTransactionDetailView(APIView):
             transaction.date = data.get("date", transaction.date)
             transaction.save()
             serializer = self.serializer_class(transaction, many=False)
-            return Response(serializer.data)
+            return Response({
+                'detail': 'successfuly updated a transaction',
+                'transaction': serializer.data
+            })
         except Exception as e:
             raise ParseError(e)
 
