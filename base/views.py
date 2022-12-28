@@ -35,6 +35,27 @@ class LogoutUserView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+class UserTransactionCategoryView(APIView):
+    serializer_class = TransactionCategorySeriliazer
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            category = TransactionCategory.objects.get(user=request.user)
+            serializer = self.serializer_class(data=category, many=True)
+            return Response(serializer, status=status.HTTP_200_OK)
+        except Exception as e:
+            raise ParseError(e)
+    def post(self, request):
+        try:
+            pass
+        except Exception as e:
+            raise ParseError(e)
+    def patch(self, request):
+        try:
+            id = request.GET.get('id')
+        except Exception as e:
+            raise ParseError(e)
+
 class UserTransactionsView(APIView):
     serializer_class = TransactionModelSeriliazser
     permission_classes = [IsAuthenticated]
@@ -116,16 +137,6 @@ class UserTransactionDetailView(APIView):
             return Response(serializer.data)
         except Exception as e:
             raise ParseError(e)
-
-class UserTransactionCategoryView(APIView):
-    serializer_class = TransactionCategorySeriliazer
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        transaction_category = TransactionCategory.objects.get(user=request.user)
-        serializer = self.serializer_class(data=transaction_category, many=True)
-        return Response(serializer, status=status.HTTP_200_OK)
-    def post(self, request):
-        pass
 
 class UserSubCategoryView(APIView):        
     def get(self, request):
