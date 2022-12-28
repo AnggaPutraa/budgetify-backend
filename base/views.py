@@ -61,7 +61,12 @@ class UserTransactionCategoryView(APIView):
             raise ParseError(e)
     def patch(self, request):
         try:
+            data = request.data
             id = request.GET.get('id')
+            category = TransactionCategory.objects.get(id=id)
+            category.name = data.get('name', category.name)
+            serializers = self.serializer_class(category, many=False)
+            return Response(serializers.data)
         except Exception as e:
             raise ParseError(e)
     def delete(self, request):
@@ -69,6 +74,10 @@ class UserTransactionCategoryView(APIView):
             id = request.GET.get('id')
             category = TransactionCategory.objects.get(pk=id)
             category.delete()
+            serializers = self.serializer_class(category, many=False)
+            return Response({
+                'detail': 'successfully deleted a transaction category'
+            })
         except Exception as e:
             raise ParseError(e)
 
