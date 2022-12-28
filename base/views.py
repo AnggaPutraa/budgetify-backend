@@ -56,8 +56,6 @@ class UserTransactionsView(APIView):
                 user=request.user,
                 name=body['category']
             )
-            print(transaction_type)
-            print(transaction_category)
             transaction = TransactionModel.objects.create(
                 user = request.user,
                 type = transaction_type,
