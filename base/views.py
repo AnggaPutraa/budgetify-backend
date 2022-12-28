@@ -74,7 +74,6 @@ class UserTransactionCategoryView(APIView):
             id = request.GET.get('id')
             category = TransactionCategory.objects.get(pk=id)
             category.delete()
-            serializers = self.serializer_class(category, many=False)
             return Response({
                 'detail': 'successfully deleted a transaction category'
             })
