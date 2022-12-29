@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse
 from django.core import serializers as django_core_serializers
 from django.shortcuts import get_object_or_404
@@ -48,7 +49,7 @@ class UserTransactionCategoryView(APIView):
             raise ParseError(e)
     def post(self, request):
         try:
-            data = request.data
+            data = json.loads(request.body.decode('utf-8'))
             type = TransactionType.objects.get(type=data['type'])
             category = TransactionCategory.objects.create(
                 user = request.user,
@@ -56,12 +57,15 @@ class UserTransactionCategoryView(APIView):
                 type = type
             )
             serializer = self.serializer_class(category, many=False)
-            return Response(serializer.data)
+            return Response({
+                'detail': 'successfully add a transaction category',
+                'new_category': serializer.data
+            })
         except Exception as e:
             raise ParseError(e)
     def patch(self, request):
         try:
-            data = request.data
+            data = json.loads(request.body.decode('utf-8'))
             id = request.GET.get('id')
             category = TransactionCategory.objects.get(id=id)
             category.name = data.get('name', category.name)
