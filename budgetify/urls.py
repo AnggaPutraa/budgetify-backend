@@ -24,4 +24,4 @@ urlpatterns = [
     path('', include('base.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = 'helpers.views.handle_404_not_found'
+# handler404 = 'helpers.views.handle_404_not_found'
