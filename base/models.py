@@ -4,6 +4,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
+    image_url = models.ImageField(
+        upload_to='images/%Y/%m/%d/', max_length=255, null=True, blank=True)
     def tokens(self):
         refresh = RefreshToken.for_user(self)
         return{
